@@ -1,0 +1,493 @@
+﻿MySoft ORM组件 
+
+新版组件与之前版本不兼容，实体需要重新生成
+鉴于功能的扩展，某些类重构过，方法也有所变动，使用方法基本保持与之前一致
+
+生成工具可以直接生成对应的实体类，而不再需要新建一个项目
+原有的方式仍然保留，为了方便设计自定义接口
+
+版本号：1.6.0
+
+1. MySoft.Data批处理和事务处理。
+
+2. 将Trans更名为DbTrans,BeginTran方法更名为BeginTrans,新增DbBatch类。
+
+    public void AddMessages(Message[] msgs)
+    {
+        //使用批处理
+        DbBatch batch = DbSession.Default.BeginBatch();
+        for (int index = 0; index < msgs.Length; index++)
+        {
+            batch.Save(msgs[index]);
+        }
+        batch.Process();
+
+        //使用带事务批处理
+        DbTrans tran = DbSession.Default.BeginTrans();
+        DbBatch batch1 = tran.BeginBatch();
+        for (int index = 0; index < msgs.Length; index++)
+        {
+            batch1.Save(msgs[index]);
+        }
+        batch1.Process();
+        tran.Commit();
+
+        //使用单条处理
+        for (int index = 0; index < msgs.Length; index++)
+        {
+            DbSession.Default.Save(msgs[index]);
+        }
+
+        //使用带事务单条处理
+        DbTrans tran1 = DbSession.Default.BeginTrans();
+        for (int index = 0; index < msgs.Length; index++)
+        {
+            tran1.Save(msgs[index]);
+        }
+        tran1.Commit();
+    }
+
+版本号：1.7.6
+
+	新增IDataPage类，通过此类来支持HtmlPager操作
+	
+	使用如下：
+	
+	IDataPage<Message[]> msgInfo = new DataPage<Message[]>(5);
+	msgInfo.RowCount = 15;
+	msgInfo.DataSource = null;
+	string linkFormat = "javascript:gotoPage($PageIndex);";
+	HtmlPager pager = new HtmlPager(msgInfo, linkFormat, 5);
+	pager.NextPageTitle = "Next Page";
+	pager.PrevPageTitle = "Prev Page";
+	pageHtml = pager.ToString();
+
+版本号：1.7.8
+
+1. MySoft.Data修正Entity在Remoting中系列化的问题
+
+2. 修正了OrderByClip和WhereClip在Remoting中生成sql不正确的问题
+
+版本号：1.8.0.0
+
+	修正了条件查询时值存在’符号产生的错误！
+
+版本号：2.0 
+
+1.MySoft.Data中新增了子查询功能SubQuery操作
+	DbSession.Default.From<Message>().SubQuery().Select(Message._.ID, Message._.PostTime.Max()).GroupBy(Message._.ID.GroupBy).ToArray();
+
+	生成的SQL语句如下:
+	select Message.id,max(Message.posttime) as posttime from(select *from Message) as Message
+
+	DbSession.Default.From<Message>().SubQuery("c").Select(Message._.ID.At("c"), Message._.PostTime.At("c").Max()).GroupBy(Message._.ID.At("c").GroupBy).ToArray();
+	生成的SQL语句如下:
+
+	select c.id,max(c.posttime) as posttime from(select *from Message) as c
+	group by c.id
+
+2.MySoft.Data中修正了枚举类型从数据库读取后转换的问题
+
+版本号：2.1.0
+
+	ORM新增内存查询功能
+	
+	MemoryFrom<Message> query = DbSession.Default.From<Message>().ToMemory();  //获取主键为1的Message信息
+	Message msg = query.Get(1);  //获取ID为1,2,3的数组
+	
+	Message[] msgs1 = query.Where(Message._.ID.In(1,2,3)).ToArray();
+	//获取按分页，每页10条中的第3页,Message._.ID是必须的，可以指定为任意列
+	
+	Message[] msgs2 = query.GetPage(Message._.ID,10).ToArray(3);
+	bool exist = query.Exists(Message._.ID == 1);
+	object obj = query.Where(Message._.ID == 1).Sum(Message._.ID);
+
+版本号：2.1.5
+
+1.新增Union操作及分页处理,进行Union操作的实体同样可以进行分页操作
+
+2.修正关联实体对于多关联在Access中的出错的bug
+
+3.全面修正Access中分页查询的bug
+
+4.修正Join操作中如果用别名，不选择字段出现表名不正确的bug
+
+5.修改EntityDisign中对关联实体中的字段名与属性名不对应的问题
+  如设计的字段名为{ID}，但无法找到此属性名或ID没有用{}括起来，则会报错。
+  
+6.修正Oracle、MySql、SQLite、FireBird获取插入数据后获取当前记录号不正确的bug
+
+版本号：2.2.5
+
+1.修正了在项目开发中一些不经常出现的bug
+
+2.批处理中加入返回错误列表
+
+3.增加了自定义表名的处理，很多情况下，表需要做分表处理，以往单一表名的定义
+	已经不能适应这种情况的处理，所以需要传入表名以操作某一特定的表
+
+	下面功能将user实体保存到表UserTest
+	DbSession.Default.Save<User>(new Table("UserTest"),user);
+
+
+中间过度版本2.4.0，以下更新将与之前版本不兼容
+......
+
+
+版本号：2.5.0
+
+1.增加了增、删、改、查创建器
+	QueryCreater	查询创建器
+	InsertCreator	插入创建器
+	UpdateCreator	修改创建器
+	DeleteCreator	删除创建器
+	
+2.支持不带泛型的数据库查询方式。
+
+	QueryCreator q = QueryCreator.NewCreator()
+		.From("user")
+		.AddField("userid")
+		.AddField("username")
+		.AddWhere("groupid",1);
+
+	DbSession.Default.From(q).ToTable();
+	DbSession.Default.From(q).ToList<T>();
+	DbSession.Default.From(q).ToListPage<T>();
+
+3.完美支持Oracle，FireBird，SQLite
+
+4.可以生成不带属性变更的方法，需设置EntityDesignConfig.xml
+	EnabledPropertyValueChange 为true,则生成，反之不生成
+	对于多线程操作时，可以选择不生成OnPropertyValueChange方法，可以提高性能
+	
+
+版本号：2.5.6
+
+1.修正了多个主键时使用Get(params object[] pkValues) 会出错的bug;
+
+2.修正了使用Oracle驱动时间格式不是yyyy-MM-dd HH:mm:ss时，查询数据出错的bug;
+
+3.新增新的分布类方式获取数据,如:
+	系统已经有一个User实体
+	public partial class User {
+		public int UserID { get;set;}
+		public string UserName {get;set;}
+	}
+	现在为User扩展一个属性
+	public partial class User {
+		public string GroupName {get; private set;} //对外只读
+		protected override void SetExtValues(ISourceReader reader)
+        	{
+        		if (false == reader.IsDBNull("GroupName"))
+        		{
+            		this.GroupName = reader.GetString("GroupName");
+        		}
+			}
+        }
+	DbSession.Default.From<User>().LeftJoin<Group>(User._.GroupID == Group._.GroupID)
+	.Select(User._.All,Group._.GroupName).ToList();
+	这样User就拥有GroupName属性了，而不需要重新设计一个实体
+	而且多出的属性不会影响到新增与修改操作
+
+版本号：2.5.8
+
+1.增加了ISourceList类，实现了对数据进行分组的功能
+	ISourceList source = new SourceList(IList<User> list);
+	source.ToDictionary<int>(User._.GroupID);
+	或
+	source.ToDictionary<int>("GroupID");
+	IArrayList 接口还有若干其它方法
+
+2.强化了内存查询方式
+	ISourceList source = new SourceList(IList<User> list);
+	MemoryFrom<User> mf = source.ToMemory();
+	或
+	MemoryFrom<User> mf = DbSession.Default.From<User>().ToMemory();
+	mf.Where(User._.UserID == 1).ToSingle();
+	mf.Where(User._.GroupID == 1).OrderBy(User._.AddTime.Desc).ToList();
+	
+	//获取第2页，每页2条
+	mf.Where(User._.GroupID == 1).GetPage(2).ToList(2);
+
+3.将DataPage修改成DataPage以免与System.Data.DataPage冲突
+  将ToDataView()方法改为ToListPage()
+
+版本号：2.6.0
+
+1.将WhereClip的生成参数化，彻底解决sql注入的问题
+
+2.强化了QueryCreator的功能
+	QueryCreator q = QueryCreator.NewCreator()
+		.From<User>()
+		.Join<Group>(User._.GroupID == Group._.GroupID)
+		.AddField(User._.All)
+		.AddField(Group._.GroupName);
+	或
+	QueryCreator q = QueryCreator.NewCreator()
+		.From("user")
+		.Join("group","user.groupid = group.groupid")
+		.AddField("user","*")
+		.AddField("group","groupname");
+
+	DbSession.Default.From(q).ToList<User>();
+	DbSession.Default.From(q).ToTable();
+
+3.支持表前缀的后期设置
+	在web项目中添加一个EntityConfig.xml方法，配置如下
+	<?xml version="1.0" encoding="utf-8" ?>
+
+	<ArrayOfPrefixSetting xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  		<PrefixSetting Name="Default" Value="tb_" />
+  		<PrefixSetting Name="EntityNamespace" Value="tb_" />
+	</ArrayOfPrefixSetting>
+	
+	Default：如未设置EntityNamespace，则默认使用此前缀
+	EntityNamespace: 实体程序集命名空间，如Simple.Entity
+	EntityNamespace可以多个，这样不同的命令空间可以使用不同的前缀
+	方便解决多个应用程序使用同一数据的问题
+
+
+版本号：2.6.5
+
+1.修正了复杂条件使用参数化时产生的bug，比如子查询 In(Query),Union联合查询
+
+2.新增MySql驱动，需要加载MySql.Data.dll
+
+3.新增数据类型IArrayList<T> ISourceList<T> ISourceTable,ISourceReader
+	使用以上几种类型可以大大加强返回的数据可操作性
+	
+	ISourceReader接口实现了按fieldName,Field来获取数据
+	IArrayList实现了ToArray方法
+	ISourceList实现了数据转换ConvertTo方法，ToGroup方法及ToMemory方法
+	ISourceTable实现了ToList<T>方法及ToMemory方法
+	
+	Get<T>()方法更改为Single<T>()方法,返回单一实体
+	ToFirst()方法更改为ToSingle()方法
+	
+	ToList方法不变，但返回类型为ISourceList
+	ToDataTable方法更改为ToTable，返回类型为ISourceTable
+	ToDataReader方法更改为ToReader，返回类型为ISourceReader
+	
+	
+4.新增接口编程方法，可以对应用程序进行解耦，使用如下：
+	
+	public interface IUser {
+		UserID { get;set;}
+		UserName {get;set;}
+	}
+	
+	public class User : IUser {
+		public int UserID { get;set;}
+		public string UserName {get;set;}
+	}
+	
+	以下ToList()返回类型ISourceList<T>,可以使用ConvertTo<T>方法进行数据的转换输出
+	IList<IUser> list = DbSession.Default.From<User>().ToList().ConvertTo<IUser>();
+	DbSession.Default.Save(IUser as User);
+	
+5.新增了DataUtils.ConvertType<T,TOutput>方法，支持字符串数据类型的转换
+
+	public class User1 {
+		public string UserID { get;set;}
+		public string UserName {get;set;}
+		public string BornDate { get;set; }
+	}
+	
+	public class User2 {
+		public int UserID { get;set;}
+		public string UserName {get;set;}
+		public DateTime BornDate { get;set; }
+	}
+	
+	User1 user1 = new User1() { UserID = "1", UserName = "test", BornDate = "2009-09-10" };
+	User2 user2 = DataUtils.ConvertType<User1,User2>(user1);
+
+
+版本号：2.6.6
+
+1.优化了Oracle分页数据查询的性能
+
+
+版本号：2.6.8
+
+1.修正了获取前N条记录时返回结果不正确的bug
+	.GetTop(5).ToList() 之前返回为全部数据
+	对Top结构进行了重构，增加了In语法时的Top查询
+	
+2.修正了Access驱动分页查询时参数处理错误的bug
+
+3.对Insert,Delete,Update操作内核进行了重要重构
+
+4.新增加了对postgreSQL数据库的支持
+
+版本号：2.7.0
+
+1.增加从ISourceReader输出为List的方法
+
+2.增加了对Oracle系列名称的自定义
+
+public class UserGroupInfo
+{
+	public int UserID { get; private set; }
+	public string UserName { get; private set; }
+	public string GroupName { get; private set; }
+}
+
+//先返回ISourceReader，然后再返回List;
+IList<UserGroupInfo> list = DbSession.Default.From<User>()
+							.LeftJoin<Group>(User._.GroupID == Group._.GroupID)
+							.Select(User._.UserID,User._.UserName,Group._.GroupName)
+							.ToReader() 或者 .ToTable()
+							.ToList<UserGroupInfo>();
+
+如果输出的列与属性值不能，可以使用MySoft.Data.Design.Mapping进行标注：
+如字段名为UserID，属性名称为ID 可以使用如下方式处理
+
+public class UserGroupInfo : IUserGroupInfo
+{
+	[MySoft.Data.Design.Mapping("UserID")]
+	public int ID { get; private set; }
+	public string UserName { get; private set; }
+	public string GroupName { get; private set; }
+}
+
+//先返回ISourceReader，然后再返回List;
+IList<UserGroupInfo> list = DbSession.Default.From<User>()
+							.LeftJoin<Group>(User._.GroupID == Group._.GroupID)
+							.Select(User._.UserID,User._.UserName,Group._.GroupName)
+							.ToReader() 或者 .ToTable()
+							.ToList<UserGroupInfo>();
+
+如果此时使用接口
+public interface IUserGroupInfo
+{
+	int ID { get; private set; }
+	string UserName { get; }
+	string GroupName { get; }
+}
+
+可以使用以下方法转换：
+IList<IUserGroupInfo> ilist = list.ConvertTo<IUserGroupInfo>();
+
+3.新增对象多属性排序的类
+
+	SortComparer<Entity> c = new SortComparer<Entity>(
+			new SortProperty("PropertyName1").Asc,
+			new SortProperty("PropertyName2").Desc,
+			new SortProperty("PropertyName31").Asc);
+	new List().Sort(c);
+	
+版本号：2.7.2
+
+1.修正了Field.IsNull()条件返回错误的bug;
+
+2.修正直接用sql进行查询或操作时，不用参数化值全部变为大写的bug.
+  之前是为了适应Oracle必须为大写的需求，现在已经修正。
+  对Oracle进行个别特殊处理即可
+
+3.修正了where条件参数化后无法进行缓存的bug.
+  之前是用sql进行缓存，而参数化后每次生成的参数名称不相同，导致缓存无效。
+  解决办法:将参数的值替换成sql中的参数，从而达到sql一致
+  
+4.修正了条件为枚举时返回的结果不正确的bug
+  
+5.修正了调用CacheOff()与CacheOn()方法出错的bug
+
+版本号：2.7.3
+
+1.新增SetProvider()方法，可以很方便对DbSession设置任意驱动
+
+2.修正Access中使用Sum()或Avg()等聚合操作时的bug
+
+3.修正通过AddParameters添加的参数无法输出值的bug
+
+4.修正了Oracle中有排序时ToSingle方法读取的数据不正确的bug
+
+5.修正了实体中没有主键时进行关联查询出错的bug
+
+6.强化了ISourceTable的处理，增加了自定义选择列、排序，筛选，多条关联赋值等一系列处理。
+
+7.对DataUtils.ConvertType进行加强处理，修正了内部一个转换出错的bug
+
+8.修正了一个ISourceTable转Entity时，Entity的属性在Table中对应的列不存在时转换报错的bug
+
+9.增加IEntityBase接口，要以通过此接口获取更改前的原始对象及当前实体状态
+  注：当前实体没有进行修改时，原始对象为null
+  
+  User user = DbSession.From<User>().ToSingle();
+  假如此时user.Name为"张三";
+  user.As<IEntityBase>().Original 此时为null;
+  当操作user.Name = "李四";
+  user.As<IEntityBase>().Original不再为null;
+  user.As<IEntityBase>().Original.As<User>().Name为"张三";
+  
+  
+10.增加TableRelation对象，用来保存一组关系，用于多表关联时直接操作使用！
+   TableRelation<A> tr = Table.From<A>().LeftJoin<B>(A._.ID == B._.ID)
+											   .LeftJoin<C>(B._.PID == C._.PID);
+   DbSession.Default.From(tr).Select(A._.All,B._.Name,C._PName).ToTable();
+   
+版本号：2.7.3 (2.7.3第一次修正)
+
+1.修正bool字段在new出来的对象时不能更新的bug
+	对new出来的对象更新进行特殊处理。
+	new出来的对象更新时会更新所有提交的值
+	如果从数据库中读出的实体，则只更新被修改过的值
+	
+2.将Original对象名更改为Old，修正Old赋值不正确的bug
+	只有当前对象从数据库中读取并且更改时才会对Old对象赋值
+
+3.在Entity对象上增加一个ToRowReader方法，可以按字段名来读取数据
+
+4.修正了SourceList.ToTable()中的一个bug.
+  当List数据项中属性为类或结构时,调用ToTable()会出错！
+  
+5.增加了SourceTable释放托管资源的接口Dispose();
+
+版本号：2.7.3 (2.7.3第二次修正)
+
+1.修正数据查询时条件中出现{}这样的符号时出错的bug.
+  由于{}在组件内部有特殊用途，没能对传入的字符串进行特殊处理导致。
+
+2.对TableRelation增加Select,Where,OrderBy等处理
+   TableRelation<A> tr = Table.From<A>().LeftJoin<B>(A._.ID == B._.ID)
+											   .LeftJoin<C>(B._.PID == C._.PID)
+											   .Where(A._.ID == 1)
+											   .OrderBy(A._ID.Desc)
+											   .Select(A._.All,B._.Name,C._PName)
+   DbSession.Default.From(tr).ToList();
+   
+3.返回的数据不再返回为接口，这样可以直接使用原始对象，省去转换的麻烦，如：
+  ToList()返回的为SourceList，SourceList继承于List
+  ToTable()返回的为SourceTable，SourceTable继承于DataTable
+  ToReader()返回的为SourceReader，SourceReader通过属性DataSource来访问IDataReader
+
+4.支持内联查询语法，如下：
+  select [Products].*,[CategoryName] = ( select [Categories].[CategoryName] from [Categories] 
+  where [Categories].[CategoryID] = [Products].[CategoryID] ) from [Products]
+  
+  TableRelation<Products> relation = Table.From<Products>()
+    .Select(Products._.All, new SysField<Categories>("CategoryName", Table.From<Categories>()
+    .Select(Categories._.CategoryName).Where(Categories._.CategoryID == Products._.CategoryID)));
+
+  IList<Products> list = DataAccess.DefaultSession.From(relation).ToList();
+
+版本号：2.7.3 (2.7.3第三次修正) stable
+
+1.修正了在操作时字符串中带有 {} 时运行出错的bug.
+
+2.修正了DbSession.Default.Update(Field,Field + 1,Where)方式运行时的错误
+
+3.对SourceList与SourceTable在功能上进一步增强
+
+4.存储过程与SQL语法操作中增加了字典参数传递的方法，如下
+  IDictionary<string, object> parameters = new Dictionary<string, object>();
+  parameters["$UserID"] = 1;
+  DbSession.Default.FromSql("select *from User where UserID = $UserID", parameters);
+  存储过程与之雷同
+  
+5.增加了SysValue的处理，例如
+  将用户ID为1的更新时间修改为当前数据库时间
+  DbSession.Default.Update(User._.UpdateTime,new SysValue("getdate()") User._.UserID == 1);
+  
+6.将原MySoft.Web中的MVP添加到MySoft.Data组件之中，避免在非Web项目中引用MySoft.Web程序集

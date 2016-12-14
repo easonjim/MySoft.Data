@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MySoft.Data.SQLite</name>
+    </assembly>
+    <members>
+        <member name="T:MySoft.Data.SQLite.SQLiteProvider">
+            <summary>
+            SQLite 驱动
+            </summary>
+        </member>
+        <member name="M:MySoft.Data.SQLite.SQLiteProvider.GetParameterType(System.Data.Common.DbParameter)">
+            <summary>
+            获取参数类型
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.SQLite.SQLiteProvider.CreateParameter(System.String,System.Object)">
+            <summary>
+            创建DbParameter
+            </summary>
+            <param name="parameterName"></param>
+            <param name="val"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.SQLite.SQLiteProvider.PrepareParameter(System.Data.Common.DbCommand)">
+            <summary>
+            调整DbCommand
+            </summary>
+            <param name="cmd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.SQLite.SQLiteProvider.CreatePageQuery``1(MySoft.Data.QuerySection{``0},System.Int32,System.Int32)">
+            <summary>
+            创建分页
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="query"></param>
+            <param name="itemCount"></param>
+            <param name="skipCount"></param>
+            <returns></returns>
+        </member>
+        <member name="P:MySoft.Data.SQLite.SQLiteProvider.SupportBatch">
+            <summary>
+            是否支持批处理
+            </summary>
+        </member>
+        <member name="P:MySoft.Data.SQLite.SQLiteProvider.AutoIncrementValue">
+            <summary>
+            返回自动ID的sql语句
+            </summary>
+        </member>
+    </members>
+</doc>

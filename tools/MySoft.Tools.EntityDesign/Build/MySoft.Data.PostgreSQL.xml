@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MySoft.Data.PostgreSQL</name>
+    </assembly>
+    <members>
+        <member name="T:MySoft.Data.PostgreSQL.PostgreSQLProvider">
+            <summary>
+            PostgreSQL 驱动
+            </summary>
+        </member>
+        <member name="M:MySoft.Data.PostgreSQL.PostgreSQLProvider.#ctor(System.String)">
+            <summary>
+            实例化
+            </summary>
+            <param name="connectionString"></param>
+        </member>
+        <member name="M:MySoft.Data.PostgreSQL.PostgreSQLProvider.GetAutoIncrement(System.String)">
+            <summary>
+            格式化IdentityName
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.PostgreSQL.PostgreSQLProvider.GetParameterType(System.Data.Common.DbParameter)">
+            <summary>
+            获取参数类型
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.PostgreSQL.PostgreSQLProvider.CreateParameter(System.String,System.Object)">
+            <summary>
+            创建DbParameter
+            </summary>
+            <param name="parameterName"></param>
+            <param name="val"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.PostgreSQL.PostgreSQLProvider.PrepareParameter(System.Data.Common.DbCommand)">
+            <summary>
+            调整DbCommand
+            </summary>
+            <param name="cmd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MySoft.Data.PostgreSQL.PostgreSQLProvider.CreatePageQuery``1(MySoft.Data.QuerySection{``0},System.Int32,System.Int32)">
+            <summary>
+            创建分页
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="query"></param>
+            <param name="itemCount"></param>
+            <param name="skipCount"></param>
+            <returns></returns>
+        </member>
+        <member name="P:MySoft.Data.PostgreSQL.PostgreSQLProvider.SupportBatch">
+            <summary>
+            是否支持批处理
+            </summary>
+        </member>
+        <member name="P:MySoft.Data.PostgreSQL.PostgreSQLProvider.AllowAutoIncrement">
+            <summary>
+            是否使用自增列
+            </summary>
+        </member>
+        <member name="P:MySoft.Data.PostgreSQL.PostgreSQLProvider.AutoIncrementValue">
+            <summary>
+            返回自动ID的sql语句
+            </summary>
+        </member>
+    </members>
+</doc>

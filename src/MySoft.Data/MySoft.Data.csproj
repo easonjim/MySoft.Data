@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B603EE2-B9F0-445E-817F-F058F43E5F48}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MySoft.Data</RootNamespace>
+    <AssemblyName>MySoft.Data</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\MySoft.Data.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\MySoft.Data.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Binder\ConverterFactory.cs" />
+    <Compile Include="Binder\IStringConverter.cs" />
+    <Compile Include="Binder\ToBool.cs" />
+    <Compile Include="Binder\ToByte.cs" />
+    <Compile Include="Binder\ToChar.cs" />
+    <Compile Include="Binder\ToDateTime.cs" />
+    <Compile Include="Binder\ToDecimal.cs" />
+    <Compile Include="Binder\ToDouble.cs" />
+    <Compile Include="Binder\ToFloat.cs" />
+    <Compile Include="Binder\ToGuid.cs" />
+    <Compile Include="Binder\ToInt16.cs" />
+    <Compile Include="Binder\ToInt32.cs" />
+    <Compile Include="Binder\ToLong.cs" />
+    <Compile Include="Binder\ToString.cs" />
+    <Compile Include="Common\CacheUtils.cs" />
+    <Compile Include="Common\Debug\DebugView.cs" />
+    <Compile Include="Common\EntityConfig.cs" />
+    <Compile Include="Common\EntityMapping.cs" />
+    <Compile Include="Common\EnumDescription.cs" />
+    <Compile Include="Common\MySoftException.cs" />
+    <Compile Include="Creator\DeleteCreator.cs" />
+    <Compile Include="Creator\IDeleteCreator.cs" />
+    <Compile Include="Creator\IInsertCreator.cs" />
+    <Compile Include="Creator\IQueryCreator.cs" />
+    <Compile Include="Creator\IUpdateCreator.cs" />
+    <Compile Include="Creator\Query\FieldValue.cs" />
+    <Compile Include="Creator\Query\IDataQuery.cs" />
+    <Compile Include="Creator\InsertCreator.cs" />
+    <Compile Include="Creator\Query\PageSection.cs" />
+    <Compile Include="Creator\QueryCreator.cs" />
+    <Compile Include="Common\SerializationManager.cs" />
+    <Compile Include="Common\HtmlPager.cs" />
+    <Compile Include="Common\DataPage.cs" />
+    <Compile Include="Common\DynamicCalls.cs" />
+    <Compile Include="Creator\Query\QuerySection.cs" />
+    <Compile Include="Creator\Query\TempTable.cs" />
+    <Compile Include="Creator\UpdateCreator.cs" />
+    <Compile Include="DataHandel\BaseDao.cs" />
+    <Compile Include="DataHandel\DataAccess.cs" />
+    <Compile Include="Data\Cache\CacheInfo.cs" />
+    <Compile Include="Data\Cache\CacheConfigurationSection.cs" />
+    <Compile Include="Data\Expression\PartialExpression\WhereClipExpression.cs" />
+    <Compile Include="Data\Query\SQLParameter.cs" />
+    <Compile Include="Common\Comparer.cs" />
+    <Compile Include="Data\Query\TopSection.cs" />
+    <Compile Include="Data\Session\EntityBase.cs" />
+    <Compile Include="Data\Session\SysField.cs" />
+    <Compile Include="Data\Session\SysValue.cs" />
+    <Compile Include="Data\Session\TableRelation.cs" />
+    <Compile Include="Data\Source\IListConvert.cs" />
+    <Compile Include="Data\Source\SourceList.cs" />
+    <Compile Include="Data\Source\SourceRow.cs" />
+    <Compile Include="Data\Source\SourceTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Data\Source\ISourceList.cs" />
+    <Compile Include="Data\Source\IRowReader.cs" />
+    <Compile Include="Data\Source\ISourceTable.cs" />
+    <Compile Include="Data\Session\Assembler.cs" />
+    <Compile Include="Data\Source\SourceReader.cs" />
+    <Compile Include="Data\Session\ExcludeField.cs" />
+    <Compile Include="Data\Session\DbBatch.cs" />
+    <Compile Include="Data\Session\IDbBatch.cs" />
+    <Compile Include="Data\Session\ITable.cs" />
+    <Compile Include="Data\Session\ProviderFactory.cs" />
+    <Compile Include="Data\Session\IDbTran.cs" />
+    <Compile Include="Data\Session\Table.cs" />
+    <Compile Include="Data\Query\ISection.cs" />
+    <Compile Include="Data\Source\ISourceReader.cs" />
+    <Compile Include="Design\Sequence.cs" />
+    <Compile Include="Design\Mapping.cs" />
+    <Compile Include="Design\PrimaryKey.cs" />
+    <Compile Include="Design\ReadOnly.cs" />
+    <Compile Include="Data\Query\IPageSection.cs" />
+    <Compile Include="Design\Description.cs" />
+    <Compile Include="Data\Session\DbProvider.cs" />
+    <Compile Include="Data\Cache\DataCache.cs" />
+    <Compile Include="Common\IDataPage.cs" />
+    <Compile Include="Mvp\Presenter\Presenter.cs" />
+    <Compile Include="Mvp\Presenter\PresenterFactory.cs" />
+    <Compile Include="Mvp\Service\ServiceConfigurationSection.cs" />
+    <Compile Include="Mvp\Service\ServiceFactory.cs" />
+    <Compile Include="Provider\Oracle.cs" />
+    <Compile Include="Provider\SqlServer.cs" />
+    <Compile Include="Provider\MsAccess.cs" />
+    <Compile Include="Data\Session\DbSession.cs" />
+    <Compile Include="Data\Session\DbHelper.cs" />
+    <Compile Include="Data\Session\Entity.cs" />
+    <Compile Include="Design\IField.cs" />
+    <Compile Include="Common\ILogable.cs" />
+    <Compile Include="Data\Session\IDbProvider.cs" />
+    <Compile Include="Data\Query\SqlSection.cs" />
+    <Compile Include="Data\Query\PageSection.cs" />
+    <Compile Include="Provider\SqlServer9.cs" />
+    <Compile Include="Data\Expression\WhereClip.cs" />
+    <Compile Include="Data\Session\Field.cs" />
+    <Compile Include="Data\Query\FromSection.cs" />
+    <Compile Include="Data\Expression\GroupByClip.cs" />
+    <Compile Include="Data\Query\IQuery.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Data\Query\QuerySection.cs" />
+    <Compile Include="Data\Expression\OrderByClip.cs" />
+    <Compile Include="Data\Query\ProcSection.cs" />
+    <Compile Include="Design\IEntity.cs" />
+    <Compile Include="Data\Session\IDbSession.cs" />
+    <Compile Include="Common\DataUtils.cs" />
+    <Compile Include="Data\Session\DbTrans.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="update.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
