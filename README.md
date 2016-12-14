@@ -1,0 +1,2 @@
+# MySoft.Data
+dotnet ORM
