@@ -51,6 +51,6 @@ SQL Server连接字符串例子：
 <add name="ConnectionString" connectionString="server=192.168.199.1;database=DataBaseName;uid=sa;pwd=123456;" providerName="MySoft.Data.SqlServer9.SqlServer9Provider" />
 ```  
 说明：是使用了MySoft.Data组件的驱动思想，采用SqlServer9的驱动，最明显区别在于生成的分页将更高效。
-##使用技巧  
+## 使用技巧  
 1、针对中小型业务系统，推荐采用自增列ID的方式，且此版本的组件对非自增列的支持不太强。  
 2、使用过程中，数据库主要是SQL Server为主。同时也支持Oracle、MySql、Access这些。
